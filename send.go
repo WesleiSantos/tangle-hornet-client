@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"time"
 	"github.com/WesleiSantos/tangle-client-go/messages"
+	"encoding/hex"
+	"os"
 
 
 	"github.com/kyokomi/emoji/v2"
@@ -19,12 +21,14 @@ func main() {
 	var amountMessages int
 	var index string
 
-	nodeURL := "http://localhost:14265"
-
 	amountMessagesParameter := flag.Int("qtm", -1, "Quantidade de mensagens")
 	indexParameter := flag.String("idx", "", "Índice das mensagens")
 	timeSleepParameter := flag.Int("tmp", 10, "Tempo de espera entre as mensagens")
+	ipParameter := flag.String("ip", "localhost", "IP do nó")
+	portParameter := flag.Int("port", 14265, "Porta do nó")
 	flag.Parse()
+
+	nodeURL := fmt.Sprintf("http://%s:%d", *ipParameter, *portParameter)
 	
 	if (*amountMessagesParameter == -1) {
 		var err error
@@ -43,12 +47,22 @@ func main() {
 		log.Fatal("invalid amount of messages")
 	}
 
-	if (*indexParameter == "") {
-		fmt.Print("Digite o índice para as mensagens: ")
-		fmt.Scanln(&index)
-	} else {
+	if *indexParameter != "" {
 		index = *indexParameter
+	} else {
+		// Se o índice não for passado, obtenha o nome da máquina
+		hostname, err := os.Hostname()
+		if err != nil {
+			fmt.Println("Erro ao obter o nome da máquina:", err)
+			return
+		}
+		index = hostname
 	}
+
+	// Exemplo de uso:
+	fmt.Println("IP:", *ipParameter)
+	fmt.Println("Port:", *portParameter)
+	fmt.Println("Topic:", index)
 
 	
 	fmt.Println(emoji.Sprint("\n:hourglass:Inciando a publicação."))
@@ -58,10 +72,10 @@ func main() {
 		start := time.Now()
 		fmt.Printf("Time enviado: %s\n", start)
 		message := fmt.Sprintf("{\"available\":true,\"avgLoad\":3,\"createdAt\":%d,\"group\":\"group3\",\"lastLoad\":4,\"publishedAt\":%d,\"source\":\"source4\",\"type\":\"LB_STATUS\"}", start.UnixNano(), start.UnixNano())
-		_, success := messages.SubmitMessage(nodeURL, index, message, 15)
+		id, success := messages.SubmitMessage(nodeURL, index, message, 15)
 
 		if success {
-			fmt.Printf("Mensagem %d publicada com sucesso\n", i+1)
+			fmt.Printf("Mensagem %d publicada com sucesso, ID=%s\n", i+1, hex.EncodeToString(id[:]))
 
 			if i == amountMessages/4 {
 				fmt.Println(emoji.Sprint(":heavy_check_mark: 25% das mensagens já foram publicadas e consultadas."))

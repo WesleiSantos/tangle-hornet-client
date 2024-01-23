@@ -109,9 +109,11 @@ func GetLastHourMessagesByIndex(nodeUrl string, index string, maxMessages int) (
 				timeLimit := time.Now().UnixNano() - int64(10 * time.Second)
 
 				createdAtInt64 = int64(createdAt)
+
 				if createdAtInt64 >= timeLimit {
 					messages = append(messages, message)
 				}
+
 
 				if len(messages) == maxMessages {
 					break
@@ -225,6 +227,7 @@ func saveToMap(messageChan chan MessageWithTimestamp, messageMap *sync.Map, size
 			startTimeUnix := data["publishedAt"].(float64)
 
 			startTime := time.Unix(int64(startTimeUnix)/int64(time.Second), (int64(startTimeUnix)%int64(time.Second)))
+			fmt.Println("Message ID:", message.ID)
 			fmt.Printf("Time Enviado: %s Time Recebido: %s\n", startTime, msgWithTimestamp.ExactReceiveTime)
 
 			 // Verificar se a chave já existe antes de inserir
