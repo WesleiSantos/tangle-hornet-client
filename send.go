@@ -23,7 +23,7 @@ func main() {
 
 	amountMessagesParameter := flag.Int("qtm", -1, "Quantidade de mensagens")
 	indexParameter := flag.String("idx", "", "Índice das mensagens")
-	timeSleepParameter := flag.Int("tmp", 10, "Tempo de espera entre as mensagens")
+	timeSleepParameter := flag.Int("tmp", 1, "Tempo de espera entre as mensagens")
 	ipParameter := flag.String("ip", "localhost", "IP do nó")
 	portParameter := flag.Int("port", 14265, "Porta do nó")
 	flag.Parse()
