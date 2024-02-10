@@ -106,7 +106,7 @@ func GetLastHourMessagesByIndex(nodeUrl string, index string, maxMessages int) (
 
 			if createdAt, ok := data["createdAt"].(float64); ok {
 				// One-hour time limit
-				timeLimit := time.Now().UnixNano() - int64(10 * time.Second)
+				timeLimit := time.Now().UnixNano() - int64(20 * time.Second)
 
 				createdAtInt64 = int64(createdAt)
 
@@ -208,7 +208,7 @@ func saveToMap(messageChan chan MessageWithTimestamp, messageMap *sync.Map, size
 			close(done) // Fechar o canal de conclusão quando o canal de mensagens estiver fechado
 			return
 		}
-		
+
 		var message Message
 		err := json.Unmarshal([]byte(msgWithTimestamp.Message), &message)
 		if err != nil {
@@ -239,7 +239,7 @@ func saveToMap(messageChan chan MessageWithTimestamp, messageMap *sync.Map, size
 				elementCount++
 				mutex.Unlock()
 			}
-
+			
 			// Verificar se o tamanho do mapa atingiu ou excedeu o valor especificado
 			if elementCount >= size {
 				close(done) // Sinalizar para encerrar

@@ -72,9 +72,9 @@ func main() {
 		start := time.Now()
 		fmt.Printf("Time enviado: %s\n", start)
 		message := fmt.Sprintf("{\"available\":true,\"avgLoad\":3,\"createdAt\":%d,\"group\":\"group3\",\"lastLoad\":4,\"publishedAt\":%d,\"source\":\"source4\",\"type\":\"LB_STATUS\"}", start.UnixNano(), start.UnixNano())
-		id, success := messages.SubmitMessage(nodeURL, index, message, 15)
-
-		if success {
+		for { 
+		 id, success := messages.SubmitMessage(nodeURL, index, message, 15)
+		 if success {
 			fmt.Printf("Mensagem %d publicada com sucesso, ID=%s\n", i+1, hex.EncodeToString(id[:]))
 
 			if i == amountMessages/4 {
@@ -84,7 +84,11 @@ func main() {
 			} else if i == amountMessages/4+amountMessages/2 {
 				fmt.Println(emoji.Sprint(":heavy_check_mark: 75% das mensagens já foram publicadas e consultadas."))
 			}
+
+			break
+		 }
 		}
+		
 		time.Sleep(time.Duration(*timeSleepParameter) * time.Second)
 	}
 
